@@ -19,6 +19,7 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebase.config";
 import { toast } from "react-toastify";
+import OAuth from "../components/utils/OAuth";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -126,7 +127,7 @@ function SignUp() {
 
           <Text fontWeight="bold" alignSelf="flex-end">
             <Link className="text-primary" to="/sign-in">
-              Sign in instead
+              Already have account
             </Link>
           </Text>
 
@@ -136,6 +137,10 @@ function SignUp() {
             ) : (
               <Button type="submit">Sign Up</Button>
             )}
+          </Box>
+
+          <Box alignSelf="center">
+            <OAuth />
           </Box>
         </Stack>
       </Container>

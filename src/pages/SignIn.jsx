@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
   Spinner,
+  Divider,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaUnlock, FaRegEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ import { toast } from "react-toastify";
 import Button from "../components/utils/Button";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase.config";
+import OAuth from "../components/utils/OAuth";
 
 function SignIn() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -101,6 +103,11 @@ function SignIn() {
               <Button type="submit">Sign In</Button>
             )}
           </Box>
+
+          <Box alignSelf="center">
+            <OAuth />
+          </Box>
+          <Divider />
 
           <Text fontWeight="bold" alignSelf="center">
             <Link className="text-primary" to="/sign-up">

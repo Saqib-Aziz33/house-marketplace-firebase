@@ -71,12 +71,6 @@ function ForgotPassword() {
               <Button type="submit">Send Link</Button>
             )}
           </Box>
-
-          <Text fontWeight="bold" alignSelf="center">
-            <Link className="text-primary" to="/sign-up">
-              Sign up instead
-            </Link>
-          </Text>
         </Stack>
       </Container>
     </div>
