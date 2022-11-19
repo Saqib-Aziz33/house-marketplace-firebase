@@ -9,11 +9,16 @@ import {
   InputRightElement,
   Stack,
   Text,
+  Spinner,
+  useToast,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaUnlock, FaRegEyeSlash } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/utils/Button";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth, db } from "../firebase.config";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -22,17 +27,71 @@ function SignUp() {
     name: "",
   });
   const [showPass, setShowPass] = useState(false);
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log(formData);
-  }
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const navigate = useNavigate();
 
   function handleChange(e) {
     setFormData((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!formData.email || !formData.password || !formData.name) {
+      toast({
+        description: "Some fileds are empty",
+        status: "error",
+        position: "bottom-right",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+    try {
+      setLoading(true);
+      // authenticate user
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      const { user } = userCredentials;
+      // upadte username
+      updateProfile(auth.currentUser, {
+        displayName: formData.name,
+      });
+      // success toast
+      toast({
+        description: "user Created successfully",
+        status: "success",
+        position: "bottom-right",
+        duration: 4000,
+        isClosable: true,
+      });
+
+      // modify user info and save to users collection
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+
+      // redirect
+      navigate("/");
+    } catch (e) {
+      console.log("create user error:", e);
+      toast({
+        description: e.message,
+        status: "error",
+        position: "bottom-right",
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -94,7 +153,11 @@ function SignUp() {
           </Text>
 
           <Box>
-            <Button type="submit">Sign Up</Button>
+            {loading ? (
+              <Spinner color="green" size="lg" />
+            ) : (
+              <Button type="submit">Sign Up</Button>
+            )}
           </Box>
         </Stack>
       </Container>
