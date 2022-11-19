@@ -8,6 +8,10 @@ import Offers from "./pages/Offers";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import PrivateRoute from "./components/utils/PrivateRoute";
+// others
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./app.scss";
 
 function App() {
@@ -17,11 +21,14 @@ function App() {
         <Routes>
           <Route index path="/" element={<Explore />} />
           <Route path="/offers" element={<Offers />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
+        <ToastContainer position="bottom-right" theme="colored" />
         <Navbar />
       </ChakraProvider>
     </BrowserRouter>

@@ -28,8 +28,8 @@ function Navbar() {
           </Link>
 
           <Link
-            to="/sign-in"
-            className={`link ${path === "/sign-in" ? "active" : ""}`}
+            to="/profile"
+            className={`link ${path === "/profile" ? "active" : ""}`}
           >
             <MdOutlineAccountCircle size={30} />
             Profile

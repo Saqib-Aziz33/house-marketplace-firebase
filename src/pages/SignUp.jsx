@@ -10,7 +10,6 @@ import {
   Stack,
   Text,
   Spinner,
-  useToast,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaUnlock, FaRegEyeSlash } from "react-icons/fa";
 import { AiOutlineInfoCircle } from "react-icons/ai";
@@ -19,6 +18,7 @@ import Button from "../components/utils/Button";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebase.config";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -28,7 +28,6 @@ function SignUp() {
   });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const toast = useToast();
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -41,13 +40,7 @@ function SignUp() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!formData.email || !formData.password || !formData.name) {
-      toast({
-        description: "Some fileds are empty",
-        status: "error",
-        position: "bottom-right",
-        duration: 4000,
-        isClosable: true,
-      });
+      toast.error("seom feilds are empty");
       return;
     }
     try {
@@ -63,32 +56,17 @@ function SignUp() {
       updateProfile(auth.currentUser, {
         displayName: formData.name,
       });
-      // success toast
-      toast({
-        description: "user Created successfully",
-        status: "success",
-        position: "bottom-right",
-        duration: 4000,
-        isClosable: true,
-      });
-
+      toast.success("welcome to marketplace app");
       // modify user info and save to users collection
       const formDataCopy = { ...formData };
       delete formDataCopy.password;
       formDataCopy.timestamp = serverTimestamp();
       await setDoc(doc(db, "users", user.uid), formDataCopy);
-
       // redirect
       navigate("/");
     } catch (e) {
       console.log("create user error:", e);
-      toast({
-        description: e.message,
-        status: "error",
-        position: "bottom-right",
-        duration: 4000,
-        isClosable: true,
-      });
+      toast.error(e.message);
     } finally {
       setLoading(false);
     }

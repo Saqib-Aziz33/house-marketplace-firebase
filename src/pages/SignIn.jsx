@@ -9,18 +9,38 @@ import {
   InputRightElement,
   Stack,
   Text,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaUnlock, FaRegEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Button from "../components/utils/Button";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase.config";
 
 function SignIn() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(formData);
+    if (!formData.email || !formData.password) {
+      toast.error("some feilds are empty");
+      return;
+    }
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      toast.info("welcome back");
+      navigate("/");
+    } catch (e) {
+      console.log("sign in error", e);
+      toast.error(e.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleChange(e) {
@@ -75,7 +95,11 @@ function SignIn() {
           </Text>
 
           <Box>
-            <Button type="submit">Sign in</Button>
+            {loading ? (
+              <Spinner color="green" size="lg" />
+            ) : (
+              <Button type="submit">Sign In</Button>
+            )}
           </Box>
 
           <Text fontWeight="bold" alignSelf="center">
