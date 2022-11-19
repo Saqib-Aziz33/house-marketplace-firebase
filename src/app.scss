@@ -1,0 +1,25 @@
+$clr-primary: #00cc66;
+
+body{
+    background-color: #f2f4f8 !important;
+}
+
+
+// conponents
+.navbar{
+    position: fixed;
+    bottom: 0;
+    left: 0;right: 0;
+    background-color: white;
+
+    .link{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.2s ease;
+        &.active, &:hover{
+            color: $clr-primary;
+        }
+    }
+}
